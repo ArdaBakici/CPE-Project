@@ -38,11 +38,11 @@ public class GazeClassifier : MonoBehaviour
         if(File.Exists(responsefile)){
             File.Delete(responsefile);
         }
-        File.Create(gazefile);
-        File.Create(responsefile);
+        // File.Create(gazefile);
+        // File.Create(responsefile);
         
-        // gazeWriter = new StreamWriter(gazefile, true);
-        // responseWriter = new StreamWriter(responsefile, true);
+        gazeWriter = new StreamWriter(gazefile, true);
+        responseWriter = new StreamWriter(responsefile, true);
  
 
     }
@@ -102,14 +102,14 @@ public class GazeClassifier : MonoBehaviour
     void saveGazeData(float x, float y){
         string gazeData = "" + x + "," + y + "\n"; 
 
-        // gazeWriter.WriteLine(gazeData);
-        File.AppendAllText(gazefile, gazeData); 
+        gazeWriter.WriteLine(gazeData);
+        // File.AppendAllText(gazefile, gazeData); 
     }
     void saveResponseData(float resTime){
         string responseTime = "" + resTime + "\n"; 
-        // responseWriter.WriteLine(responseTime);
+        responseWriter.WriteLine(responseTime);
 
-        File.AppendAllText(responsefile, responseTime); 
+        // File.AppendAllText(responsefile, responseTime); 
     }
 
 }

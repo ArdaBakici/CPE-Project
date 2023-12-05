@@ -10,7 +10,7 @@ public class QA : MonoBehaviour
 
     Question[] questions;
 
-    public Text questionText;
+    public Text  questionText;
     public Button option1, option2, option3, option4;
 
     Question currQuestion; 
@@ -18,22 +18,32 @@ public class QA : MonoBehaviour
 
     public string path = "Assets/Data/";
     public string QAFilename = "QA.csv";
+    public string QASaveFilename = "QASave.csv";
 
     string QAfile;
+    string QASaveFile; 
+    StreamWriter QAWriter;
     // Start is called before the first frame update
     void Start()
     {
 
         QAfile = path + QAFilename;
+        QASaveFile = path+QASaveFilename;
         if(!File.Exists(QAfile)){
             File.Create(QAfile);
         }
+        parseQAFile(QAfile);
 
-        parseQAFilename("Assets/Data/QA.csv");
+        if(File.Exists(QASaveFile)){
+            File.Delete(QASaveFile);
+        }
+        
+        // QAWriter = new StreamWriter(QASaveFilename, true);
+
         displayQuestion(questions[0]);
         currQuestion = questions[0];
-
-        
+        Debug.Log(currQuestion.question + " " + currQuestion.answer + " " + currQuestion.difficulty); 
+      
     }
 
     // Update is called once per frame
@@ -42,14 +52,11 @@ public class QA : MonoBehaviour
         
     }
 
-    
-
-
-    void parseQAFilename(string filename){
+    void parseQAFile(string filename){
         // File Stucture: 
         // Question, Answer (int), Option1, Option2, Option3, Option4, difficulty (float)
 
-        string[] lines = System.IO.File.ReadAllLines(filename);
+        string[] lines = File.ReadAllLines(filename);
         string[] entries; 
         questions = new Question[lines.Length];
         for(int i=0; i < lines.Length; i++){
@@ -70,6 +77,8 @@ public class QA : MonoBehaviour
     public void onClick(int answer){
         
         string ansData; 
+        currQuestion = questions[questionIdx];
+        Debug.Log(currQuestion.question + " " + currQuestion.answer + " " + currQuestion.difficulty); 
         if(answer == currQuestion.answer){
             ansData = "1" + "," + currQuestion.difficulty + "\n"; 
             Debug.Log("Correct");
@@ -78,22 +87,31 @@ public class QA : MonoBehaviour
             ansData = "0" + "," + currQuestion.difficulty + "\n"; 
             Debug.Log("Incorrect");
         }
-        File.AppendAllText(QAfile, ansData);
+        // File.AppendAllText(QASaveFilename, ansData);
+        saveData(ansData);
         changeQuestion(); 
 
     }
 
+    void saveData(string ansData){
+        QAWriter = new StreamWriter(QASaveFile, true);
+        QAWriter.WriteLine(ansData);
+        QAWriter.Close();
+    }
     void changeQuestion(){
         if(questionIdx < questions.Length-1){
             questionIdx++;
             currQuestion = questions[questionIdx];
+            Debug.Log(currQuestion.question + " " + currQuestion.answer + " " + currQuestion.difficulty); 
             displayQuestion(currQuestion);
         }
         else{
             Debug.Log("Done");
         }   
     }
-
+    void OnApplicationQuit(){
+        QAWriter.Close();
+    }
 }
 
 
