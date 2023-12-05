@@ -79,7 +79,8 @@ public class GazeClassifier : MonoBehaviour
         RaycastHit hit; 
         
         Ray forward = new Ray(cameraTf.position, cameraTf.forward); 
-
+        Debug.DrawRay(cameraTf.position, cameraTf.forward*100, Color.white, 10, true);
+        
         if(Physics.Raycast(forward, out hit)){ 
         
             Debug.Log(hit.collider.gameObject.tag); 

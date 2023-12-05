@@ -10,8 +10,8 @@ public class QA : MonoBehaviour
 
     Question[] questions;
 
-    public Text  questionText;
-    public Button option1, option2, option3, option4;
+    public TextMeshPro  questionText, result;
+    public TextMeshPro option1, option2, option3, option4;
 
     Question currQuestion; 
     int questionIdx = 0;
@@ -32,7 +32,7 @@ public class QA : MonoBehaviour
         if(!File.Exists(QAfile)){
             File.Create(QAfile);
         }
-        parseQAFile(QAfile);
+        tempParse();
 
         if(File.Exists(QASaveFile)){
             File.Delete(QASaveFile);
@@ -66,12 +66,19 @@ public class QA : MonoBehaviour
         }
     }
 
+    void tempParse(){
+        questions = new Question[2]; 
+        questions[0] = new Question("q1", new string[]{"A", "B", "C", "D"}, 1, 0.1f);
+        questions[1] = new Question("q2", new string[]{"A1", "B1", "C1", "D1"}, 0, 0.2f);
+
+    }
+
     void displayQuestion(Question q){
         questionText.text = q.question;
-        option1.GetComponentInChildren<TextMeshProUGUI>().text = q.options[0];
-        option2.GetComponentInChildren<TextMeshProUGUI>().text = q.options[1];
-        option3.GetComponentInChildren<TextMeshProUGUI>().text = q.options[2];
-        option4.GetComponentInChildren<TextMeshProUGUI>().text = q.options[3];
+        option1.text = q.options[0];
+        option2.text = q.options[1];
+        option3.text = q.options[2];
+        option4.text = q.options[3];
     }
 
     public void onClick(int answer){
@@ -82,10 +89,12 @@ public class QA : MonoBehaviour
         if(answer == currQuestion.answer){
             ansData = "1" + "," + currQuestion.difficulty + "\n"; 
             Debug.Log("Correct");
+            result.text = "Correct!"; 
         }
         else{
             ansData = "0" + "," + currQuestion.difficulty + "\n"; 
             Debug.Log("Incorrect");
+            result.text = "Incorrect"; 
         }
         // File.AppendAllText(QASaveFilename, ansData);
         saveData(ansData);
@@ -106,6 +115,7 @@ public class QA : MonoBehaviour
             displayQuestion(currQuestion);
         }
         else{
+            result.text = "Done"; 
             Debug.Log("Done");
         }   
     }
