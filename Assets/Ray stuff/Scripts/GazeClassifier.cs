@@ -38,14 +38,18 @@ public class GazeClassifier : MonoBehaviour
             File.Delete(gazefile);
         }
         if(File.Exists(responsefile)){
-            File.Delete(responsefile);
+            // File.Delete(responsefile);
         }
         // File.Create(gazefile);
         // File.Create(responsefile);
         
         gazeWriter = new StreamWriter(gazefile, true);
+<<<<<<< Updated upstream
         responseWriter = new StreamWriter(responsefile, true);
 
+=======
+        // responseWriter = new StreamWriter(responsefile, true);
+>>>>>>> Stashed changes
  
 
     }
@@ -79,8 +83,9 @@ public class GazeClassifier : MonoBehaviour
     }
 
     void responseTimes(){
-        RaycastHit hit; 
+        // RaycastHit hit; 
         
+<<<<<<< Updated upstream
         Ray forward = new Ray(cameraTf.position, cameraTf.forward); 
         // DrawLine(cameraTf.position, cameraTf.position + cameraTf.forward*10, Color.white, 2);
 
@@ -97,10 +102,27 @@ public class GazeClassifier : MonoBehaviour
         }
         
         }
+=======
+        // Ray forward = new Ray(cameraTf.position, cameraTf.forward); 
+        // Debug.DrawRay(cameraTf.position, cameraTf.forward*100, Color.white, 10, true);
+        
+        // if(Physics.Raycast(forward, out hit)){ 
+        
+        //     Debug.Log(hit.collider.gameObject.tag); 
+
+        //     if(hit.collider.gameObject.tag == "Event"){
+        //         float resTime = Time.time - hit.collider.gameObject.GetComponent<Event>().time; 
+        //         rTime.text = "Last Respnse time: " + Math.Round(resTime, 2); 
+        //         Destroy(hit.collider.gameObject); 
+        //         saveResponseData(resTime);
+        //     }
+        // }
+>>>>>>> Stashed changes
 
     
     
 
+<<<<<<< Updated upstream
     // void DrawLine(Vector3 start, Vector3 end, Color color, float duration = 0.2f)
     // {
         
@@ -125,11 +147,17 @@ public class GazeClassifier : MonoBehaviour
     // // lr.SetPosition(1, end);
     // // GameObject.Destroy(myLine, duration);
     // }
+=======
+    void OnApplicationQuit(){
+        // gazeWriter.Close();
+        // responseWriter.Close();
+    }
+>>>>>>> Stashed changes
 
     void saveGazeData(float x, float y){
         string gazeData = "" + x + "," + y + "\n"; 
 
-        gazeWriter.WriteLine(gazeData);
+        // gazeWriter.WriteLine(gazeData);
         // File.AppendAllText(gazefile, gazeData); 
     }
     void saveResponseData(float resTime){
