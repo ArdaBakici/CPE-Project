@@ -24,7 +24,7 @@ public class GazeClassifier : MonoBehaviour
 
     string gazefile;
     string responsefile;
-    StreamWriter gazeWriter;
+    // StreamWriter gazeWriter;
     StreamWriter responseWriter;
 
     void Start()
@@ -32,19 +32,19 @@ public class GazeClassifier : MonoBehaviour
         cameraTf = GetComponentInChildren<Camera>().GetComponent<Transform>(); 
         
         gazefile = path + gazeFileName;
-        responsefile = path + responseFileName; 
+        // responsefile = path + responseFileName; 
 
         if(File.Exists(gazefile)){
             File.Delete(gazefile);
         }
-        if(File.Exists(responsefile)){
-            File.Delete(responsefile);
-        }
+        // if(File.Exists(responsefile)){
+        //     File.Delete(responsefile);
+        // }
         // File.Create(gazefile);
         // File.Create(responsefile);
         
-        gazeWriter = new StreamWriter(gazefile, true);
-        responseWriter = new StreamWriter(responsefile, true);
+        // gazeWriter = new StreamWriter(gazefile, true);
+        // responseWriter = new StreamWriter(responsefile, true);
 
  
 
@@ -79,22 +79,22 @@ public class GazeClassifier : MonoBehaviour
     }
 
     void responseTimes(){
-        RaycastHit hit; 
+        // RaycastHit hit; 
         
-        Ray forward = new Ray(cameraTf.position, cameraTf.forward); 
-        // DrawLine(cameraTf.position, cameraTf.position + cameraTf.forward*10, Color.white, 2);
+        // Ray forward = new Ray(cameraTf.position, cameraTf.forward); 
+        // // DrawLine(cameraTf.position, cameraTf.position + cameraTf.forward*10, Color.white, 2);
 
-        if(Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity)){ 
-            Debug.Log(hit.collider.gameObject.tag); 
-            whatHit.text = hit.collider.gameObject.tag; 
+        // if(Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity)){ 
+        //     Debug.Log(hit.collider.gameObject.tag); 
+        //     whatHit.text = hit.collider.gameObject.tag; 
 
-            if(hit.collider.gameObject.tag == "Event"){
-                float resTime = Time.time - hit.collider.gameObject.GetComponent<Event>().time; 
-                rTime.text = "Last Respnse time: " + Math.Round(resTime, 2); 
-                Destroy(hit.collider.gameObject); 
-                saveResponseData(resTime);
-            }
-        }
+        //     if(hit.collider.gameObject.tag == "Event"){
+        //         float resTime = Time.time - hit.collider.gameObject.GetComponent<Event>().time; 
+        //         rTime.text = "Last Respnse time: " + Math.Round(resTime, 2); 
+        //         Destroy(hit.collider.gameObject); 
+        //         saveResponseData(resTime);
+        //     }
+        // }
         
         }
 
@@ -128,15 +128,16 @@ public class GazeClassifier : MonoBehaviour
 
     void saveGazeData(float x, float y){
         string gazeData = "" + x + "," + y + "\n"; 
-
+        StreamWriter gazeWriter = new StreamWriter(gazefile, true);
         gazeWriter.WriteLine(gazeData);
+        gazeWriter.Close();
         // File.AppendAllText(gazefile, gazeData); 
     }
-    void saveResponseData(float resTime){
-        string responseTime = "" + resTime + "\n"; 
-        responseWriter.WriteLine(responseTime);
+    // void saveResponseData(float resTime){
+    //     string responseTime = "" + resTime + "\n"; 
+    //     responseWriter.WriteLine(responseTime);
 
-        // File.AppendAllText(responsefile, responseTime); 
-    }
+    //     // File.AppendAllText(responsefile, responseTime); 
+    // }
 
 }
