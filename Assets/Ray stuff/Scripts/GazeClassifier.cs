@@ -16,6 +16,7 @@ public class GazeClassifier : MonoBehaviour
     public Text yText; 
 
     public Text rTime; 
+    public Text whatHit; 
 
     public string path = "Assets/Data/";
     public string gazeFileName = "gazeData.csv";
@@ -25,6 +26,7 @@ public class GazeClassifier : MonoBehaviour
     string responsefile;
     StreamWriter gazeWriter;
     StreamWriter responseWriter;
+
     void Start()
     {
         cameraTf = GetComponentInChildren<Camera>().GetComponent<Transform>(); 
@@ -43,6 +45,7 @@ public class GazeClassifier : MonoBehaviour
         
         gazeWriter = new StreamWriter(gazefile, true);
         responseWriter = new StreamWriter(responsefile, true);
+
  
 
     }
@@ -55,7 +58,7 @@ public class GazeClassifier : MonoBehaviour
     }
 
     void gazeAngles(){
-
+        // DrawLine(cameraTf.position, cameraTf.position + cameraTf.forward*10, Color.white, 2);
         gazeDir = cameraTf.forward; 
         // Debug.Log("" + gazeDir.x + " " + gazeDir.y + " "+ gazeDir.z); 
         float dX = gazeDir.x/gazeDir.z; 
@@ -79,11 +82,11 @@ public class GazeClassifier : MonoBehaviour
         RaycastHit hit; 
         
         Ray forward = new Ray(cameraTf.position, cameraTf.forward); 
-        Debug.DrawRay(cameraTf.position, cameraTf.forward*100, Color.white, 10, true);
-        
-        if(Physics.Raycast(forward, out hit)){ 
-        
+        // DrawLine(cameraTf.position, cameraTf.position + cameraTf.forward*10, Color.white, 2);
+
+        if(Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity)){ 
             Debug.Log(hit.collider.gameObject.tag); 
+            whatHit.text = hit.collider.gameObject.tag; 
 
             if(hit.collider.gameObject.tag == "Event"){
                 float resTime = Time.time - hit.collider.gameObject.GetComponent<Event>().time; 
@@ -92,13 +95,36 @@ public class GazeClassifier : MonoBehaviour
                 saveResponseData(resTime);
             }
         }
+        
+        }
 
-    }
+    
+    
 
-    void OnApplicationQuit(){
-        gazeWriter.Close();
-        responseWriter.Close();
-    }
+    // void DrawLine(Vector3 start, Vector3 end, Color color, float duration = 0.2f)
+    // {
+        
+    //     LineRenderer.startColor = color;
+    //     LineRenderer.endColor = color;
+ 
+    //     // set width of the renderer
+    //     LineRenderer.startWidth = 0.3f;
+    //     LineRenderer.endWidth = 0.3f;
+ 
+    //     // set the position
+    //     LineRenderer.SetPosition(0, start);
+    //     LineRenderer.SetPosition(1, end);
+    // // GameObject myLine = new GameObject();
+    // // myLine.transform.position = start;
+    // // myLine.AddComponent();
+    // // LineRenderer lr = myLine.GetComponent();
+    // // lr.material = new Material(Shader.Find("Particles/Alpha Blended Premultiply"));
+    // // lr.SetColors(color, color);
+    // // lr.SetWidth(0.1f, 0.1f);
+    // // lr.SetPosition(0, start);
+    // // lr.SetPosition(1, end);
+    // // GameObject.Destroy(myLine, duration);
+    // }
 
     void saveGazeData(float x, float y){
         string gazeData = "" + x + "," + y + "\n"; 
