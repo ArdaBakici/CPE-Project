@@ -18,7 +18,6 @@ public class GazeClassifier : MonoBehaviour
     public Text rTime; 
     public Text whatHit; 
 
-    public string path = "Assets/Data/";
     public string gazeFileName = "gazeData.csv";
     public string responseFileName = "responseData.csv";
 
@@ -31,7 +30,7 @@ public class GazeClassifier : MonoBehaviour
     {
         cameraTf = GetComponentInChildren<Camera>().GetComponent<Transform>(); 
         
-        gazefile = path + gazeFileName;
+        gazefile = Application.persistentDataPath + gazeFileName;
         // responsefile = path + responseFileName; 
 
         if(File.Exists(gazefile)){

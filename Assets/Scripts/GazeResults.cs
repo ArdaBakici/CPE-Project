@@ -8,14 +8,13 @@ using UnityEngine.SceneManagement;
 public class GazeResults : MonoBehaviour
 {
     TextMeshProUGUI resultText;
-    public string path = "Assets/Data/";
     public string responseFileName = "responseData.csv";
 
     // Start is called before the first frame update
     void Start()
     {
         resultText = GetComponent<TextMeshProUGUI>();
-        string responsefile = path+responseFileName;
+        string responsefile = Application.persistentDataPath + responseFileName;
         string printTxt = "\n";
         string[] lines = File.ReadAllLines(responsefile);
         string[] entries; 

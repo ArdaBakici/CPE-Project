@@ -9,13 +9,12 @@ using UnityEngine.SceneManagement;
 public class QuizResult : MonoBehaviour
 {
     TextMeshProUGUI resultText;
-    public string path = "Assets/Data/";
     public string QASaveFilename = "QASave.csv";
     // Start is called before the first frame update
     void Start()
     {
         resultText = GetComponent<TextMeshProUGUI>();
-        string QASaveFile = path+QASaveFilename;
+        string QASaveFile = Application.persistentDataPath + QASaveFilename;
         string printTxt = "\n";
         string[] lines = File.ReadAllLines(QASaveFile);
         string[] entries; 
