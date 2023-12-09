@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DataProcessing : MonoBehaviour
 {
@@ -10,6 +12,9 @@ public class DataProcessing : MonoBehaviour
 
     public GameObject heatmapPlane;
     public GameObject reactionBar; 
+
+    public GameObject startPt, endPt;
+    public TextMeshProUGUI resultText;
 
     public string path = "Assets/Data/";
     public string gazeFileName = "gazeData.csv";
@@ -108,6 +113,7 @@ public class DataProcessing : MonoBehaviour
 
         drawReactionTime(responseData);
 
+        displayResults(gazeStats, responseStats, quizStats, totalScore);
 
 
     }
@@ -161,7 +167,7 @@ public class DataProcessing : MonoBehaviour
             while((line = sr.ReadLine()) != null){
                 if(line == ""){continue; } // Skip empty lines (last line
                 string[] entries = line.Split(',');
-                float responseTime = float.Parse(entries[0]);
+                float responseTime = float.Parse(entries[1]);
                 respList.Add(new float[]{responseTime});
             }
         }
@@ -405,7 +411,6 @@ public class DataProcessing : MonoBehaviour
 
     }
 
-
     void drawReactionTime(float[][] data){
         float avg = 0; 
         int len = data.Length; 
@@ -417,8 +422,8 @@ public class DataProcessing : MonoBehaviour
         }   
         avg = avg/len * 1000;
 
-        Vector3 barStartPos = new Vector3(-7.7f, 0.186f, -5.01f); 
-        Vector3 barEndPos = new Vector3(1.2f, 0.186f, -7.4f);
+        Vector3 barStartPos = startPt.transform.localPosition; 
+        Vector3 barEndPos = endPt.transform.localPosition;
 
         float minResTime = 0; 
         float maxResTime = 475;
@@ -432,6 +437,33 @@ public class DataProcessing : MonoBehaviour
 
 
     }
+
+    void displayResults(float[] gazeStats, float[] responseStats, float[] quizStats, float totalScore){
+        string printTxt = "\n";
+        float result = calcADHDProb(totalScore);
+        // printTxt += "Gaze Score: " + gazeStats[2] + "\n";
+        // printTxt += "Response Score: " + responseStats[2] + "\n";
+        // printTxt += "Quiz Score: " + quizStats[2] + "\n";
+        // printTxt += "Total Score: " + totalScore + "\n";
+        printTxt += "ADHD Probability: " + result * 100 + "%";
+
+        resultText.text = printTxt;
+
+    }
+
+    float calcADHDProb(float score){
+        float prob; 
+        if(score - scoreThreshold < 0){
+            prob = 0.5f + 0.5f * (score - scoreThreshold)/scoreThreshold;
+        }
+        else{
+            prob = 0.5f + 0.5f * (score - scoreThreshold)/(1-scoreThreshold);
+        }
+        
+        return (float)Math.Round(prob, 3);  
+
+    }
+
 }
 // Give bonus to responsetimeout? 
 // Find appropriate methods for avg and stdDev classification 
