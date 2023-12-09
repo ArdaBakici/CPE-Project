@@ -11,10 +11,6 @@ public class ResTimeClassifier : MonoBehaviour
     public string path = "Assets/Data/";
     public string responseFileName = "responseData.csv";
     string responsefile;
-<<<<<<<< HEAD:Assets/Scripts/ResTimeClassifier.cs
-    StreamWriter responseWriter;
-========
->>>>>>>> 3c6362a72b05a489049017006f19d21c588c32a3:Assets/Ray stuff/Scripts/ResTimeClassifier.cs
 
     void Start()
     {
@@ -23,10 +19,7 @@ public class ResTimeClassifier : MonoBehaviour
         {
             File.Delete(responsefile);
         }
-<<<<<<<< HEAD:Assets/Scripts/ResTimeClassifier.cs
-========
 
->>>>>>>> 3c6362a72b05a489049017006f19d21c588c32a3:Assets/Ray stuff/Scripts/ResTimeClassifier.cs
     }
 
     // Update is called once per frame
@@ -41,29 +34,23 @@ public class ResTimeClassifier : MonoBehaviour
         Debug.Log("Collision detected");
         if(collision.gameObject.tag == "Event")
         {
-            float resTime = Time.time - collision.gameObject.GetComponent<Event>().time;
-            string eventName = collision.gameObject.GetComponent<Event>().eventName;
-            rTime.text = "Last Response time: " + Math.Round(resTime, 2);
+            float resTime = Time.time - collision.gameObject.GetComponent<Event>().time; 
+            rTime.text = "Last Respnse time: " + Math.Round(resTime, 2);
 
             Debug.Log("Response time: " + resTime); 
 
             Destroy(collision.gameObject);
 
-            saveResponseData(resTime, eventName);
+            saveResponseData(resTime);
         }
 
 
     }
-    void saveResponseData(float resTime, string name)
+    void saveResponseData(float resTime)
     {
-<<<<<<<< HEAD:Assets/Scripts/ResTimeClassifier.cs
-        responseWriter = new StreamWriter(responsefile, true);
-        string responseTime = name + "," + resTime;
-========
         string responseTime = "" + resTime + "\n";
 
         StreamWriter responseWriter = new StreamWriter(responsefile, true);
->>>>>>>> 3c6362a72b05a489049017006f19d21c588c32a3:Assets/Ray stuff/Scripts/ResTimeClassifier.cs
         responseWriter.WriteLine(responseTime);
         responseWriter.Close();
         // File.AppendAllText(responsefile, responseTime); 

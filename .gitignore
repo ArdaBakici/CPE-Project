@@ -61,6 +61,7 @@ sysinfo.txt
 *.unitypackage
 *.app
 *.csv
+*.csv.meta
 
 # Crashlytics generated file
 crashlytics-build.properties
