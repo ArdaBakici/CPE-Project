@@ -8,14 +8,13 @@ public class DisTimeClassifier : MonoBehaviour
 {
     // Start is called before the first frame update
     public Text rTime;
-    public string path = "Assets/Data/";
     public string responseFileName = "responseData.csv";
     string responsefile;
     StreamWriter responseWriter;
 
     void Start()
     {
-        responsefile = path + responseFileName;
+        responsefile = Application.persistentDataPath + responseFileName;
         if (File.Exists(responsefile))
         {
             File.Delete(responsefile);

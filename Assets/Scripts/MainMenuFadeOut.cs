@@ -24,6 +24,7 @@ public class MainMenuFadeOut : MonoBehaviour
     }
 
     public void StartGame(){
+        director.time = 26.00;
         director.Play();
         mainMenu.SetActive(false);
     }

@@ -173,7 +173,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1e6be18a02efe94793356f3b109fed3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: Assets/Data/
   QASaveFilename: QASave.csv
 --- !u!114 &511363835
 MonoBehaviour:
@@ -454,7 +453,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7700681768109609050, guid: 1dc2feace66683240961ce294b0ddd7a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 3.525
+      value: 5.37
       objectReference: {fileID: 0}
     - target: {fileID: 7700681768109609050, guid: 1dc2feace66683240961ce294b0ddd7a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -791,7 +790,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c04160d0e257fb49810bd7520c97ada, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: Assets/Data/
   responseFileName: responseData.csv
 --- !u!1001 &1445769143
 PrefabInstance:

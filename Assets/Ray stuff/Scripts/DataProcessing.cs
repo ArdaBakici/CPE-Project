@@ -16,10 +16,9 @@ public class DataProcessing : MonoBehaviour
     public GameObject startPt, endPt;
     public TextMeshProUGUI resultText;
 
-    public string path = "Assets/Data/";
     public string gazeFileName = "gazeData.csv";
     public string responseFileName = "responseData.csv";
-    public string quizFileName = "quizData.csv";
+    public string quizFileName = "QASave.csv";
     
     // Gaze Score Parameters-----------
     public int[,] gazeBoxes = {{15, 15},
@@ -74,9 +73,9 @@ public class DataProcessing : MonoBehaviour
     float maxResponseScore = 0;
     void Start()
     {
-        gazefile = path + gazeFileName;
-        responsefile = path + responseFileName;
-        quizfile = path + quizFileName;
+        gazefile = Application.persistentDataPath + gazeFileName;
+        responsefile = Application.persistentDataPath + responseFileName;
+        quizfile = Application.persistentDataPath + quizFileName;
 
         processData(); 
     }
@@ -93,26 +92,30 @@ public class DataProcessing : MonoBehaviour
         float[] classifications = processGaze(gazeData);
         float[] gazeStats = calcDataStats(classifications, "Gaze");
 
+        float[,] heatmap = createHeatMap(gazeData);
+        drawHeatMap(heatmap);
+
         // Response Data processing
         float[][] responseData = parseResponseData();
         float[] responseScores = processResponseData(responseData);
         float[] responseStats = calcDataStats(responseScores, "Response Time");
+        float avg = responseData[0][0];
+        //resultText.text = responseStats[0]; 
 
+        drawReactionTime(responseData);
 
         // Quiz Data processing
         float[][] quizData = parseQuizData();
         float[] quizScores = processQuizData(quizData);
         float[] quizStats = calcDataStats(quizScores, "Quiz");
 
+
+        
         // Total Score Calculation
         float totalScore = calcTotalScore(gazeStats, responseStats, quizStats);
 
         // Displaying Data: 
-        float[,] heatmap = createHeatMap(gazeData);
-        drawHeatMap(heatmap);
-
-        drawReactionTime(responseData);
-
+        responseStats[2] = avg; 
         displayResults(gazeStats, responseStats, quizStats, totalScore);
 
 
@@ -442,7 +445,7 @@ public class DataProcessing : MonoBehaviour
         string printTxt = "\n";
         float result = calcADHDProb(totalScore);
         // printTxt += "Gaze Score: " + gazeStats[2] + "\n";
-        // printTxt += "Response Score: " + responseStats[2] + "\n";
+        printTxt += "Response Score: " + responseStats[2] + "\n";
         // printTxt += "Quiz Score: " + quizStats[2] + "\n";
         // printTxt += "Total Score: " + totalScore + "\n";
         printTxt += "ADHD Probability: " + result * 100 + "%";

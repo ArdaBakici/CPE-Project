@@ -8,13 +8,12 @@ public class ResTimeClassifier : MonoBehaviour
 {
     // Start is called before the first frame update
     public Text rTime;
-    public string path = "Assets/Data/";
     public string responseFileName = "responseData.csv";
     string responsefile;
 
     void Start()
     {
-        responsefile = path + responseFileName;
+        responsefile = Application.persistentDataPath + responseFileName;
         if (File.Exists(responsefile))
         {
             File.Delete(responsefile);
@@ -35,7 +34,7 @@ public class ResTimeClassifier : MonoBehaviour
         if(collision.gameObject.tag == "Event")
         {
             float resTime = Time.time - collision.gameObject.GetComponent<Event>().time; 
-            rTime.text = "Last Respnse time: " + Math.Round(resTime, 2);
+            rTime.text = "Last Response time: " + Math.Round(resTime, 2);
 
             Debug.Log("Response time: " + resTime); 
 
