@@ -12,9 +12,6 @@ public class ResTimeClassifier : MonoBehaviour
     public string responseFileName = "responseData.csv";
     string responsefile;
 
-    StreamWriter responseWriter;
-
-
     void Start()
     {
         responsefile = path + responseFileName;
@@ -22,7 +19,6 @@ public class ResTimeClassifier : MonoBehaviour
         {
             File.Delete(responsefile);
         }
-        responseWriter = new StreamWriter(responsefile, true);
 
     }
 
@@ -53,8 +49,10 @@ public class ResTimeClassifier : MonoBehaviour
     void saveResponseData(float resTime)
     {
         string responseTime = "" + resTime + "\n";
-        responseWriter.WriteLine(responseTime);
 
+        StreamWriter responseWriter = new StreamWriter(responsefile, true);
+        responseWriter.WriteLine(responseTime);
+        responseWriter.Close();
         // File.AppendAllText(responsefile, responseTime); 
     }
 
