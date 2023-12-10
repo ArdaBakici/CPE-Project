@@ -923,7 +923,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3163595092216617774, guid: 88fbe5dfdd2f32d48baea93466739987, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -10
+      value: -13
       objectReference: {fileID: 0}
     - target: {fileID: 3163595092216617774, guid: 88fbe5dfdd2f32d48baea93466739987, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1616,9 +1616,9 @@ MonoBehaviour:
   minResponseTime: 0.2
   correctPts: 1
   difficultyFactor: 1
-  scoreThreshold: 0
+  scoreThreshold: 0.5
   heatMapDims: 2c010000c8000000
-  maxMapAngles: 3c0000003c000000
+  maxMapAngles: 2d0000002d000000
   brushStroke: 0.5
   planeScaleFactor: 10
 --- !u!4 &1951065310

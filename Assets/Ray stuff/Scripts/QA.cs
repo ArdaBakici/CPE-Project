@@ -117,7 +117,6 @@ public class QA : MonoBehaviour{
             result.text = "Incorrect"; 
         }
         // File.AppendAllText(QASaveFilename, ansData);
-        SceneManager.LoadScene("Ray_Results");
         saveData(ansData);
         changeQuestion(); 
     }

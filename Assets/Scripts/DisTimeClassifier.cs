@@ -19,6 +19,11 @@ public class DisTimeClassifier : MonoBehaviour
         {
             File.Delete(responsefile);
         }
+
+        responseWriter = new StreamWriter(responsefile, true);
+        string responseTime = "";
+        responseWriter.WriteLine(responseTime);
+        responseWriter.Close();
     }
 
     // Update is called once per frame

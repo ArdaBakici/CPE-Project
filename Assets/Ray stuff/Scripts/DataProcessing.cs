@@ -21,9 +21,9 @@ public class DataProcessing : MonoBehaviour
     public string quizFileName = "QASave.csv";
     
     // Gaze Score Parameters-----------
-    public int[,] gazeBoxes = {{15, 15},
-                                {50, 30},
-                                {180, 180}}; 
+    public int[,] gazeBoxes = {{5, 10},
+                               {25, 25},
+                               {180, 180}}; 
 
     public float[] boxScores = {10, 5, 0};
 
@@ -99,7 +99,6 @@ public class DataProcessing : MonoBehaviour
         float[][] responseData = parseResponseData();
         float[] responseScores = processResponseData(responseData);
         float[] responseStats = calcDataStats(responseScores, "Response Time");
-        float avg = responseData[0][0];
         //resultText.text = responseStats[0]; 
 
         drawReactionTime(responseData);
@@ -109,13 +108,21 @@ public class DataProcessing : MonoBehaviour
         float[] quizScores = processQuizData(quizData);
         float[] quizStats = calcDataStats(quizScores, "Quiz");
 
-
-        
         // Total Score Calculation
         float totalScore = calcTotalScore(gazeStats, responseStats, quizStats);
 
         // Displaying Data: 
-        responseStats[2] = avg; 
+        float avg = 0f;
+        int len = 0;
+        foreach(float[] s in responseData){
+            if(s[0] == -1){ // If Invalid, then don't count it in average 
+                continue; 
+            }
+            len++;
+            avg += s[0]; 
+        }
+        avg = avg/len;
+        responseStats[2] = avg;
         displayResults(gazeStats, responseStats, quizStats, totalScore);
 
 
@@ -178,6 +185,10 @@ public class DataProcessing : MonoBehaviour
         return responseData; 
     }
     float[] processResponseData(float[][] data){ // Calculates response scores 
+        if(data.Length == 0){
+            return new float[] {getResponseScore(5f)};
+        }
+
         float[] scores = new float[data.Length]; 
         for(int i = 0; i < data.Length; i++){
             scores[i] = getResponseScore(data[i][0]);
@@ -444,10 +455,10 @@ public class DataProcessing : MonoBehaviour
     void displayResults(float[] gazeStats, float[] responseStats, float[] quizStats, float totalScore){
         string printTxt = "\n";
         float result = calcADHDProb(totalScore);
-        // printTxt += "Gaze Score: " + gazeStats[2] + "\n";
+        printTxt += "Gaze Score: " + gazeStats[2] + "\n";
         printTxt += "Response Score: " + responseStats[2] + "\n";
-        // printTxt += "Quiz Score: " + quizStats[2] + "\n";
-        // printTxt += "Total Score: " + totalScore + "\n";
+        printTxt += "Quiz Score: " + quizStats[2] + "\n";
+        printTxt += "Total Score: " + totalScore + "\n";
         printTxt += "ADHD Probability: " + result * 100 + "%";
 
         resultText.text = printTxt;
