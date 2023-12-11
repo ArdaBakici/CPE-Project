@@ -37,7 +37,7 @@ public class DataProcessing : MonoBehaviour
     public float responseScoreFactor = 1; // per second
     public float responseTimeout = 10; // seconds
     public float defaultMinResponseTime = 0.2f; // In case ResponseEvent type is not recognized
-
+    int total_num_of_events = 0;
     // Quiz Score Parameters------------
     public float correctPts = 1; // Number of points given to a correct answer
     public float difficultyFactor = 1; // Scaled by difficulty of question
@@ -75,7 +75,6 @@ public class DataProcessing : MonoBehaviour
     string quizfile;
 
     float maxQuizScore = 0;
-    float maxResponseScore = 0;
     float maxGazeScore = 0;
     void Start()
     {
@@ -182,7 +181,7 @@ public class DataProcessing : MonoBehaviour
                 if(line == ""){continue; } // Skip empty lines (last line
                 string[] entries = line.Split(',');
                 float responseTime = float.Parse(entries[1]);
-                float minTime = responseEventWeights[entries[0]].numberOfEvents;
+                float minTime = responseEventWeights[entries[0]].minimumTime;
                 respList.Add(new float[]{responseTime, minTime});
             }
         }
@@ -190,8 +189,10 @@ public class DataProcessing : MonoBehaviour
         return responseData; 
     }
     float[] processResponseData(float[][] data){ // Calculates response scores
+        total_num_of_events = 0;
         foreach(KeyValuePair<string, ResponseEvent> response in responseEventWeights){
-            maxResponseScore += 1f/response.minimumTime * responseScoreFactor * response.numberOfEvents;
+            //maxResponseScore += 1f/response.minimumTime * responseScoreFactor * response.numberOfEvents;
+            total_num_of_events += response.numberOfEvents;
         }
 
         float[] scores = new float[data.Length]; // by default array values are 0 
@@ -203,11 +204,13 @@ public class DataProcessing : MonoBehaviour
     float getResponseScore(float[] response){
         float score = 0; 
         if(response[0] > responseTimeout){
-            score = 0; 
+            // user time is infinity lim(x->inf) 1/sqrt(x) = 0
+            score = 0;
         }
         else{
             if(response[0] < response[1]) response[0] = response[1];
-            score = 1f/response[0] * responseScoreFactor;  
+            // we use sqrt because it scales better than 1/x
+            score = Mathf.Sqrt(response[1]/response[0]) * responseScoreFactor;
         }
         return score;
     }
@@ -295,7 +298,7 @@ public class DataProcessing : MonoBehaviour
         totalScore += gazeScore;
 
         // Response Score
-        float responseScore = responseStats[2] / maxResponseScore * normResponseWeight;
+        float responseScore = responseStats[2] / total_num_of_events * normResponseWeight;
         totalScore += responseScore;
 
         // Quiz Score
@@ -499,4 +502,3 @@ class ResponseEvent{
 // Give bonus to responsetimeout? 
 // Find appropriate methods for avg and stdDev classification 
 // 
-
