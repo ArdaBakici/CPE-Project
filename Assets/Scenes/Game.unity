@@ -1243,7 +1243,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2556631988119308489, guid: 8ca75f5890c56224a931d6f394f9e040, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -5.04
+      value: -4.858
       objectReference: {fileID: 0}
     - target: {fileID: 2556631988119308489, guid: 8ca75f5890c56224a931d6f394f9e040, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1251,7 +1251,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2556631988119308489, guid: 8ca75f5890c56224a931d6f394f9e040, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 562.67
+      value: 562.32
       objectReference: {fileID: 0}
     - target: {fileID: 2556631988119308489, guid: 8ca75f5890c56224a931d6f394f9e040, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1285,6 +1285,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5106102748086385549, guid: 8ca75f5890c56224a931d6f394f9e040, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.05
+      objectReference: {fileID: 0}
     - target: {fileID: 9049156424292631433, guid: 8ca75f5890c56224a931d6f394f9e040, type: 3}
       propertyPath: m_Name
       value: SauronEvent
@@ -1297,11 +1301,43 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Event
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1410884700199307163, guid: 8ca75f5890c56224a931d6f394f9e040, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2398999080507283405, guid: 8ca75f5890c56224a931d6f394f9e040, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 358073433}
   m_SourcePrefab: {fileID: 100100000, guid: 8ca75f5890c56224a931d6f394f9e040, type: 3}
+--- !u!1 &358073432 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2398999080507283405, guid: 8ca75f5890c56224a931d6f394f9e040, type: 3}
+  m_PrefabInstance: {fileID: 358073431}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &358073433
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 358073432}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0.00000023841858, y: 0, z: 0}
 --- !u!1 &388994709
 GameObject:
   m_ObjectHideFlags: 0
@@ -1650,7 +1686,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5106102748086385549, guid: 8ca75f5890c56224a931d6f394f9e040, type: 3}
       propertyPath: m_LocalScale.y
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5106102748086385549, guid: 8ca75f5890c56224a931d6f394f9e040, type: 3}
       propertyPath: m_LocalScale.z
@@ -1680,11 +1716,43 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Event
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1410884700199307163, guid: 8ca75f5890c56224a931d6f394f9e040, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2398999080507283405, guid: 8ca75f5890c56224a931d6f394f9e040, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 493789227}
   m_SourcePrefab: {fileID: 100100000, guid: 8ca75f5890c56224a931d6f394f9e040, type: 3}
+--- !u!1 &493789226 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2398999080507283405, guid: 8ca75f5890c56224a931d6f394f9e040, type: 3}
+  m_PrefabInstance: {fileID: 493789225}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &493789227
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 493789226}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &507435021
 PrefabInstance:
   m_ObjectHideFlags: 0

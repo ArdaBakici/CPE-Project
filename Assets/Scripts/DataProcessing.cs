@@ -29,16 +29,21 @@ public class DataProcessing : MonoBehaviour
 
 
     // Response Score Parameters--------
+    public Dictionary<string, ResponseEvent> responseEventWeights = new Dictionary<string, ResponseEvent>(){
+        {"Ring", new ResponseEvent(0.1f, 2)},
+        {"Sauron", new ResponseEvent(1f, 1)},
+        {"Blade", new ResponseEvent(0.1f, 1)},
+    };
     public float responseScoreFactor = 1; // per second
-    public float responseTimeout = 15; // seconds
-    public float minResponseTime = 0.2f; // seconds
+    public float responseTimeout = 10; // seconds
+    public float defaultMinResponseTime = 0.2f; // In case ResponseEvent type is not recognized
 
     // Quiz Score Parameters------------
     public float correctPts = 1; // Number of points given to a correct answer
     public float difficultyFactor = 1; // Scaled by difficulty of question
 
     // Total Score Parameters-----------
-    
+
     // Final Score Threshold: 
     public float scoreThreshold = 0; // If score is below this threshold, then the user is considered distracted
 
@@ -71,6 +76,7 @@ public class DataProcessing : MonoBehaviour
 
     float maxQuizScore = 0;
     float maxResponseScore = 0;
+    float maxGazeScore = 0;
     void Start()
     {
         gazefile = Application.persistentDataPath + gazeFileName;
@@ -124,8 +130,6 @@ public class DataProcessing : MonoBehaviour
         avg = avg/len;
         responseStats[2] = avg;
         displayResults(gazeStats, responseStats, quizStats, totalScore);
-
-
     }
 
 
@@ -178,31 +182,32 @@ public class DataProcessing : MonoBehaviour
                 if(line == ""){continue; } // Skip empty lines (last line
                 string[] entries = line.Split(',');
                 float responseTime = float.Parse(entries[1]);
-                respList.Add(new float[]{responseTime});
+                float minTime = responseEventWeights[entries[0]].numberOfEvents;
+                respList.Add(new float[]{responseTime, minTime});
             }
         }
         float[][] responseData = respList.ToArray();
         return responseData; 
     }
-    float[] processResponseData(float[][] data){ // Calculates response scores 
-        if(data.Length == 0){
-            return new float[] {getResponseScore(5f)};
+    float[] processResponseData(float[][] data){ // Calculates response scores
+        foreach(KeyValuePair<string, ResponseEvent> response in responseEventWeights){
+            maxResponseScore += 1f/response.minimumTime * responseScoreFactor * response.numberOfEvents;
         }
 
-        float[] scores = new float[data.Length]; 
+        float[] scores = new float[data.Length]; // by default array values are 0 
         for(int i = 0; i < data.Length; i++){
-            scores[i] = getResponseScore(data[i][0]);
+            scores[i] = getResponseScore(data[i]);
         }
         return scores; 
     }
-    float getResponseScore(float responseTime){
+    float getResponseScore(float[] response){
         float score = 0; 
-        if(responseTime > responseTimeout){
-            score = -1; 
+        if(response[0] > responseTimeout){
+            score = 0; 
         }
         else{
-            score = 1f/responseTime * responseScoreFactor; 
-            maxResponseScore += 1f/minResponseTime * responseScoreFactor;
+            if(response[0] < response[1]) response[0] = response[1];
+            score = 1f/response[0] * responseScoreFactor;  
         }
         return score;
     }
@@ -276,7 +281,7 @@ public class DataProcessing : MonoBehaviour
     // Total Score Calculator
     float calcTotalScore(float[] gazeStats, float[] responseStats, float[] quizStats){
 
-        float maxGazeScore = boxScores.Max() * gazeStats[3];
+        maxGazeScore = boxScores.Max() * gazeStats[3];
 
         // Normalize weights
         float normGazeWeight = weights["gaze"] / weights.Values.Sum();
@@ -455,9 +460,10 @@ public class DataProcessing : MonoBehaviour
     void displayResults(float[] gazeStats, float[] responseStats, float[] quizStats, float totalScore){
         string printTxt = "\n";
         float result = calcADHDProb(totalScore);
-        printTxt += "Gaze Score: " + gazeStats[2] + "\n";
-        printTxt += "Response Score: " + responseStats[2] + "\n";
-        printTxt += "Quiz Score: " + quizStats[2] + "\n";
+        printTxt += "Gaze Score: " + gazeStats[2] + " Max Gaze Score: " + maxGazeScore + "\n";
+        // Debug
+        printTxt += "Response Score: " + responseStats[2] + "Max Response Score: " + maxResponseScore "\n";
+        printTxt += "Quiz Score: " + quizStats[2] + " Max Quiz Score: " + maxQuizScore + "\n";
         printTxt += "Total Score: " + totalScore + "\n";
         printTxt += "ADHD Probability: " + result * 100 + "%";
 
@@ -479,6 +485,17 @@ public class DataProcessing : MonoBehaviour
     }
 
 }
+
+class ResponseEvent{
+    public float minimumTime; // in seconds
+    public int numberOfEvents; // how many times event occurs
+
+    public ResponseEvent(float minTime, int numOfEvent){
+        minimumTime = minTime;
+        numberOfEvents = numOfEvent;
+    }
+}
+
 // Give bonus to responsetimeout? 
 // Find appropriate methods for avg and stdDev classification 
 // 
