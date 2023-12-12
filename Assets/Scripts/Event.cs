@@ -9,6 +9,12 @@ public class Event : MonoBehaviour
     public string eventName;
     void Start()
     {
+        
+    }
+
+    // Event can be used multiple times thus OnEnable is used
+    void OnEnable()
+    {
         time = Time.time;
     }
 

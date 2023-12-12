@@ -41,10 +41,9 @@ public class DisTimeClassifier : MonoBehaviour
             float resTime = Time.time - collision.gameObject.GetComponent<Event>().time;
             string eventName = collision.gameObject.GetComponent<Event>().eventName;
             rTime.text = "Last Response time: " + Math.Round(resTime, 2);
-
             Debug.Log("Response time: " + resTime); 
 
-            Destroy(collision.gameObject);
+            collision.gameObject.transform.parent.gameObject.SetActive(false);
 
             saveResponseData(resTime, eventName);
         }
