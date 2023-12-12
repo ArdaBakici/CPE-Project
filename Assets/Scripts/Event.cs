@@ -12,6 +12,7 @@ public class Event : MonoBehaviour
         
     }
 
+    // Event can be used multiple times thus OnEnable is used
     void OnEnable()
     {
         time = Time.time;
