@@ -15,6 +15,7 @@ public class DataProcessing : MonoBehaviour
 
     public GameObject startPt, endPt;
     public TextMeshProUGUI resultText;
+    public TextMeshProUGUI debugText;
 
     public string gazeFileName = "gazeData.csv";
     public string responseFileName = "responseData.csv";
@@ -31,9 +32,9 @@ public class DataProcessing : MonoBehaviour
     // Response Score Parameters--------
     [SerializeField]
     public Dictionary<string, ResponseEvent> responseEventWeights = new Dictionary<string, ResponseEvent>(){
-        {"Ring", new ResponseEvent(0.2f, 2)},
+        {"Ring", new ResponseEvent(0.3f, 2)},
         {"Sauron", new ResponseEvent(2f, 1)},
-        {"Blade", new ResponseEvent(0.2f, 1)},
+        {"Blade", new ResponseEvent(0.3f, 1)},
     };
     public float responseScoreFactor = 1; // per second
     public float responseTimeout = 10; // seconds
@@ -173,7 +174,7 @@ public class DataProcessing : MonoBehaviour
     // Response Processing Functions
     float[][] parseResponseData(){ // Reads data from response file and returns array of response times
         List<float[]> respList = new List<float[]>();
-
+        string debugtxt = "";
         using(StreamReader sr = new StreamReader(responsefile)){
             string line;
             while((line = sr.ReadLine()) != null){
@@ -181,9 +182,11 @@ public class DataProcessing : MonoBehaviour
                 string[] entries = line.Split(',');
                 float responseTime = float.Parse(entries[1]);
                 float minTime = responseEventWeights[entries[0]].minimumTime;
+                debugtxt += "Distraction " + entries[1] + ": " + entries[0] + "\n";
                 respList.Add(new float[]{responseTime, minTime});
             }
         }
+        debugText.text = debugtxt;
         float[][] responseData = respList.ToArray();
         return responseData; 
     }

@@ -9,6 +9,11 @@ public class Event : MonoBehaviour
     public string eventName;
     void Start()
     {
+        
+    }
+
+    void OnEnable()
+    {
         time = Time.time;
     }
 
