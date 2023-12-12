@@ -136,7 +136,7 @@ public class QA : MonoBehaviour{
         }
         else{ 
             Debug.Log("Done");
-            SceneManager.LoadScene("Ray_Results");
+            SceneManager.LoadScene("Results");
         }   
     }
     void OnApplicationQuit(){

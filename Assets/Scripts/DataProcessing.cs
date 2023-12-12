@@ -29,10 +29,11 @@ public class DataProcessing : MonoBehaviour
 
 
     // Response Score Parameters--------
+    [SerializeField]
     public Dictionary<string, ResponseEvent> responseEventWeights = new Dictionary<string, ResponseEvent>(){
-        {"Ring", new ResponseEvent(0.1f, 2)},
-        {"Sauron", new ResponseEvent(1f, 1)},
-        {"Blade", new ResponseEvent(0.1f, 1)},
+        {"Ring", new ResponseEvent(0.2f, 2)},
+        {"Sauron", new ResponseEvent(2f, 1)},
+        {"Blade", new ResponseEvent(0.2f, 1)},
     };
     public float responseScoreFactor = 1; // per second
     public float responseTimeout = 10; // seconds
@@ -78,9 +79,11 @@ public class DataProcessing : MonoBehaviour
     float maxGazeScore = 0;
     void Start()
     {
-        gazefile = Application.persistentDataPath + gazeFileName;
-        responsefile = Application.persistentDataPath + responseFileName;
-        quizfile = Application.persistentDataPath + quizFileName;
+        string path = Application.persistentDataPath;
+        //string path = "Assets/Data/";
+        gazefile = path + gazeFileName;
+        responsefile = path + responseFileName;
+        quizfile = path + quizFileName;
 
         processData(); 
     }
@@ -120,14 +123,10 @@ public class DataProcessing : MonoBehaviour
         float avg = 0f;
         int len = 0;
         foreach(float[] s in responseData){
-            if(s[0] == -1){ // If Invalid, then don't count it in average 
-                continue; 
-            }
             len++;
             avg += s[0]; 
         }
         avg = avg/len;
-        responseStats[2] = avg;
         displayResults(gazeStats, responseStats, quizStats, totalScore);
     }
 
@@ -192,9 +191,9 @@ public class DataProcessing : MonoBehaviour
         total_num_of_events = 0;
         foreach(KeyValuePair<string, ResponseEvent> response in responseEventWeights){
             //maxResponseScore += 1f/response.minimumTime * responseScoreFactor * response.numberOfEvents;
-            total_num_of_events += response.numberOfEvents;
+            total_num_of_events += response.Value.numberOfEvents;
         }
-
+        
         float[] scores = new float[data.Length]; // by default array values are 0 
         for(int i = 0; i < data.Length; i++){
             scores[i] = getResponseScore(data[i]);
@@ -202,7 +201,7 @@ public class DataProcessing : MonoBehaviour
         return scores; 
     }
     float getResponseScore(float[] response){
-        float score = 0; 
+        float score = 0;
         if(response[0] > responseTimeout){
             // user time is infinity lim(x->inf) 1/sqrt(x) = 0
             score = 0;
@@ -463,12 +462,11 @@ public class DataProcessing : MonoBehaviour
     void displayResults(float[] gazeStats, float[] responseStats, float[] quizStats, float totalScore){
         string printTxt = "\n";
         float result = calcADHDProb(totalScore);
-        printTxt += "Gaze Score: " + gazeStats[2] + " Max Gaze Score: " + maxGazeScore + "\n";
-        // Debug
-        printTxt += "Response Score: " + responseStats[2] + "Max Response Score: " + maxResponseScore "\n";
-        printTxt += "Quiz Score: " + quizStats[2] + " Max Quiz Score: " + maxQuizScore + "\n";
+        printTxt += "Gaze Score: " + gazeStats[2] + " Max : " + maxGazeScore + "\n";
+        printTxt += "Response Score: " + responseStats[2]/total_num_of_events + "\n";
+        printTxt += "Quiz Score: " + quizStats[2] + "\n";
         printTxt += "Total Score: " + totalScore + "\n";
-        printTxt += "ADHD Probability: " + result * 100 + "%";
+        printTxt += "ADHD Probability: " + (100 - (result * 100)) + "%";
 
         resultText.text = printTxt;
 
@@ -477,7 +475,7 @@ public class DataProcessing : MonoBehaviour
     float calcADHDProb(float score){
         float prob; 
         if(score - scoreThreshold < 0){
-            prob = 0.5f + 0.5f * (score - scoreThreshold)/scoreThreshold;
+            prob = 0.5f * (score/scoreThreshold);
         }
         else{
             prob = 0.5f + 0.5f * (score - scoreThreshold)/(1-scoreThreshold);
@@ -489,7 +487,7 @@ public class DataProcessing : MonoBehaviour
 
 }
 
-class ResponseEvent{
+public class ResponseEvent{
     public float minimumTime; // in seconds
     public int numberOfEvents; // how many times event occurs
 
