@@ -111,7 +111,6 @@ public class DataProcessing : MonoBehaviour
 
         float[] responseStats = calcDataStats(responseScores, "Response Time");
         //resultText.text = responseStats[0]; 
-        Debug.Log(responseData[0][0] + " " + responseData[0][1]); 
 
         drawReactionTime(responseData);
 
@@ -209,23 +208,19 @@ public class DataProcessing : MonoBehaviour
     }
     float getResponseScore(float[] response){
         float score = 0;
-        Debug.Log(response[0] + " " + response[1]);
 
         if(response[0] > responseTimeout){
             // user time is infinity lim(x->inf) 1/sqrt(x) = 0
             score = 0;
         }
         else{
-            Debug.Log(response[0] + " " + response[1]); 
             float realResp = response[0]; 
             float minResp = response[1];
             if(realResp < minResp) 
                 realResp= minResp;
             // we use sqrt because it scales better than 1/x
-            Debug.Log(response[0] + " " + response[1]); 
             score = Mathf.Sqrt(minResp/realResp) * responseScoreFactor;
         }
-        Debug.Log(response[0] + " " + response[1]); 
         return score;
     }
  
@@ -468,11 +463,8 @@ public class DataProcessing : MonoBehaviour
         float scaledRT = ((min - minTimeThresh)/(maxTimeThresh - minTimeThresh) + minTimeThresh) * 1000;
 
         Vector3 newBarPos = (barEndPos - barStartPos) * (scaledRT - minResTime) / (maxResTime - minResTime) + barStartPos;
-        Debug.Log(newBarPos);
 
         // reactionBar.transform.position = reactionBar.transform.TransformVector(newBarPos);
-        Debug.Log(min); 
-        Debug.Log(scaledRT); 
         reactionBar.transform.localPosition = newBarPos;
 
 
