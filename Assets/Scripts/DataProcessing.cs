@@ -80,8 +80,8 @@ public class DataProcessing : MonoBehaviour
     float maxGazeScore = 0;
     void Start()
     {
-        string path = Application.persistentDataPath;
-        //string path = "Assets/Data/";
+        // string path = Application.persistentDataPath;
+        string path = "Assets/Data/";
         gazefile = path + gazeFileName;
         responsefile = path + responseFileName;
         quizfile = path + quizFileName;
@@ -106,7 +106,9 @@ public class DataProcessing : MonoBehaviour
 
         // Response Data processing
         float[][] responseData = parseResponseData();
+
         float[] responseScores = processResponseData(responseData);
+
         float[] responseStats = calcDataStats(responseScores, "Response Time");
         //resultText.text = responseStats[0]; 
 
@@ -188,6 +190,7 @@ public class DataProcessing : MonoBehaviour
         }
         debugText.text = debugtxt;
         float[][] responseData = respList.ToArray();
+
         return responseData; 
     }
     float[] processResponseData(float[][] data){ // Calculates response scores
@@ -196,23 +199,27 @@ public class DataProcessing : MonoBehaviour
             //maxResponseScore += 1f/response.minimumTime * responseScoreFactor * response.numberOfEvents;
             total_num_of_events += response.Value.numberOfEvents;
         }
-        
         float[] scores = new float[data.Length]; // by default array values are 0 
         for(int i = 0; i < data.Length; i++){
             scores[i] = getResponseScore(data[i]);
         }
+
         return scores; 
     }
     float getResponseScore(float[] response){
         float score = 0;
+
         if(response[0] > responseTimeout){
             // user time is infinity lim(x->inf) 1/sqrt(x) = 0
             score = 0;
         }
         else{
-            if(response[0] < response[1]) response[0] = response[1];
+            float realResp = response[0]; 
+            float minResp = response[1];
+            if(realResp < minResp) 
+                realResp= minResp;
             // we use sqrt because it scales better than 1/x
-            score = Mathf.Sqrt(response[1]/response[0]) * responseScoreFactor;
+            score = Mathf.Sqrt(minResp/realResp) * responseScoreFactor;
         }
         return score;
     }
@@ -436,15 +443,13 @@ public class DataProcessing : MonoBehaviour
     }
 
     void drawReactionTime(float[][] data){
-        float avg = 0; 
-        int len = data.Length; 
+        float min = 1000f; 
         for(int i = 0; i < data.Length; i++){
-            avg += data[i][0]; 
-            if(data[i][0] > responseTimeout){ // Event Condition: If timeout, then don't count it in average
-                len--; 
+            // Debug.Log(data[i][0] + " "  + data[i][1]); 
+            if(data[i][0] < min){
+                min = data[i][0];
             }
         }   
-        avg = avg/len * 1000;
 
         Vector3 barStartPos = startPt.transform.localPosition; 
         Vector3 barEndPos = endPt.transform.localPosition;
@@ -452,11 +457,14 @@ public class DataProcessing : MonoBehaviour
         float minResTime = 0; 
         float maxResTime = 475;
 
-        Vector3 newBarPos = (barEndPos - barStartPos) * (avg - minResTime) / (maxResTime - minResTime) + barStartPos;
-        Debug.Log(newBarPos);
+        float minTimeThresh = 0f; 
+        float maxTimeThresh = 3.5f; // Scales Response time of 0.7s to mean (200 ms)
+
+        float scaledRT = ((min - minTimeThresh)/(maxTimeThresh - minTimeThresh) + minTimeThresh) * 1000;
+
+        Vector3 newBarPos = (barEndPos - barStartPos) * (scaledRT - minResTime) / (maxResTime - minResTime) + barStartPos;
 
         // reactionBar.transform.position = reactionBar.transform.TransformVector(newBarPos);
-        Debug.Log(avg); 
         reactionBar.transform.localPosition = newBarPos;
 
 
