@@ -12,12 +12,6 @@ public class GazeClassifier : MonoBehaviour
     Vector3 gazeDir; 
     Transform cameraTf; 
 
-    public Text xText; 
-    public Text yText; 
-
-    public Text rTime; 
-    public Text whatHit; 
-
     public string gazeFileName = "gazeData.csv";
     public string responseFileName = "responseData.csv";
 
@@ -61,15 +55,7 @@ public class GazeClassifier : MonoBehaviour
         if(gazeDir.y < 0){
             thetaY = -thetaY; 
         }
-
-
-        double xDeg = thetaX; 
-        double yDeg = thetaY; 
-        xText.text = "X Degrees: " + Math.Round(xDeg, 2); 
-        yText.text = "Y Degrees: " + Math.Round(yDeg, 2);  
-    
         saveGazeData(thetaX, thetaY);
-
     }
 
     void saveGazeData(float x, float y){ //  Saving Data to a file

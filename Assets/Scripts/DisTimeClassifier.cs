@@ -7,7 +7,6 @@ using System.IO;
 public class DisTimeClassifier : MonoBehaviour
 {
     // Start is called before the first frame update
-    public Text rTime;
     public string responseFileName = "responseData.csv";
     string responsefile;
     StreamWriter responseWriter;
@@ -41,7 +40,6 @@ public class DisTimeClassifier : MonoBehaviour
         {
             float resTime = Time.time - collision.gameObject.GetComponent<Event>().time;
             string eventName = collision.gameObject.GetComponent<Event>().eventName;
-            rTime.text = "Last Response time: " + Math.Round(resTime, 2); // Debug Statement
             Debug.Log("Response time: " + resTime); 
 
             collision.gameObject.transform.parent.gameObject.SetActive(false); // Deactivates the Event object

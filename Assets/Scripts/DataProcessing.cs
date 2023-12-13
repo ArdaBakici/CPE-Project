@@ -81,7 +81,7 @@ public class DataProcessing : MonoBehaviour
     void Start()
     {
         string path = Application.persistentDataPath;
-        // string path = "Assets/Data/";
+        //string path = "Assets/Data/";
         gazefile = path + gazeFileName;
         responsefile = path + responseFileName;
         quizfile = path + quizFileName;
@@ -111,7 +111,6 @@ public class DataProcessing : MonoBehaviour
 
         // Draw reaction time panel
         drawReactionTime(responseData);
-
         // Quiz Data processing
         float[][] quizData = parseQuizData();
         float[] quizScores = processQuizData(quizData);
@@ -455,17 +454,15 @@ public class DataProcessing : MonoBehaviour
 
         // Move reactionBar to new position
         reactionBar.transform.localPosition = newBarPos;
-
-
     }
 
     void displayResults(float[] gazeStats, float[] responseStats, float[] quizStats, float totalScore){
         string printTxt = "\n";
         float result = calcADHDProb(totalScore); // Probability of not having ADHD
-        printTxt += "Gaze Score: " + gazeStats[2] + " Max : " + maxGazeScore + "\n";
+        /*printTxt += "Gaze Score: " + gazeStats[2] + " Max : " + maxGazeScore + "\n";
         printTxt += "Response Score: " + responseStats[2]/total_num_of_events + "\n";
         printTxt += "Quiz Score: " + quizStats[2] + "\n";
-        printTxt += "Total Score: " + totalScore + "\n";
+        printTxt += "Total Score: " + totalScore + "\n";*/
         printTxt += "ADHD Probability: " + (100 - (result * 100)) + "%"; // 1-result to get probability of having ADHD
 
         resultText.text = printTxt;
