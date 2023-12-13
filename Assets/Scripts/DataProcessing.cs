@@ -80,8 +80,8 @@ public class DataProcessing : MonoBehaviour
     float maxGazeScore = 0;
     void Start()
     {
-        // string path = Application.persistentDataPath;
-        string path = "Assets/Data/";
+        string path = Application.persistentDataPath;
+        // string path = "Assets/Data/";
         gazefile = path + gazeFileName;
         responsefile = path + responseFileName;
         quizfile = path + quizFileName;
@@ -106,12 +106,10 @@ public class DataProcessing : MonoBehaviour
 
         // Response Data processing
         float[][] responseData = parseResponseData();
-
         float[] responseScores = processResponseData(responseData);
-
         float[] responseStats = calcDataStats(responseScores, "Response Time");
-        //resultText.text = responseStats[0]; 
 
+        // Draw reaction time panel
         drawReactionTime(responseData);
 
         // Quiz Data processing
@@ -123,28 +121,21 @@ public class DataProcessing : MonoBehaviour
         float totalScore = calcTotalScore(gazeStats, responseStats, quizStats);
 
         // Displaying Data: 
-        float avg = 0f;
-        int len = 0;
-        foreach(float[] s in responseData){
-            len++;
-            avg += s[0]; 
-        }
-        avg = avg/len;
         displayResults(gazeStats, responseStats, quizStats, totalScore);
     }
 
 
     // Gaze Processing Functions
     float[][] parseGazeData(){ // Reads data from gaze file and returns array of x, y angles
-
         float x, y; 
         List<float[]> gazeList = new List<float[]>(); 
         
-        using(StreamReader sr = new StreamReader(gazefile)){
+        using(StreamReader sr = new StreamReader(gazefile)){ // Reading data from file
             string line;
             while((line = sr.ReadLine()) != null){
                 if(line == ""){continue; } // Skip empty lines (last line
                 string[] entries = line.Split(',');
+                // Getting x and y angle values from file
                 x = float.Parse(entries[0]);
                 y = float.Parse(entries[1]);
                 gazeList.Add(new float[]{x, y});
@@ -152,20 +143,20 @@ public class DataProcessing : MonoBehaviour
         }
 
         float[][] gazeData = gazeList.ToArray();
-
         return gazeData; 
     }
-    float[] processGaze(float[][] data){ // Classifies gaze data into boxes and returns array of classifications
-        float[] classifications = new float[data.Length]; 
+    float[] processGaze(float[][] data){ // Classifies gaze data into boxes and returns  
+        float[] classifications = new float[data.Length];    //array of classifications
         for(int i = 0; i < data.Length; i++){
             classifications[i] = getGazeScore(data[i][0], data[i][1]);
         }
         return classifications;
     }
     float getGazeScore(float x, float y){ // Helper function for processGaze
- 
+        // Returns score of gaze data point based on which Focus box (gazeBox) it is in
         for(int i = 0; i < gazeBoxes.Length; i++){
-            if(x < gazeBoxes[i,0] && y < gazeBoxes[i,1] && x > -gazeBoxes[i,0] && y > -gazeBoxes[i,1]){
+            if( x < gazeBoxes[i,0] && y < gazeBoxes[i,1] && 
+                x > -gazeBoxes[i,0] && y > -gazeBoxes[i,1]){
                 return boxScores[i]; 
             }
         }
@@ -196,7 +187,6 @@ public class DataProcessing : MonoBehaviour
     float[] processResponseData(float[][] data){ // Calculates response scores
         total_num_of_events = 0;
         foreach(KeyValuePair<string, ResponseEvent> response in responseEventWeights){
-            //maxResponseScore += 1f/response.minimumTime * responseScoreFactor * response.numberOfEvents;
             total_num_of_events += response.Value.numberOfEvents;
         }
         float[] scores = new float[data.Length]; // by default array values are 0 
@@ -217,7 +207,7 @@ public class DataProcessing : MonoBehaviour
             float realResp = response[0]; 
             float minResp = response[1];
             if(realResp < minResp) 
-                realResp= minResp;
+                realResp = minResp;
             // we use sqrt because it scales better than 1/x
             score = Mathf.Sqrt(minResp/realResp) * responseScoreFactor;
         }
@@ -226,7 +216,7 @@ public class DataProcessing : MonoBehaviour
  
 
     // Quiz Processing Functions
-    float[][] parseQuizData(){ // Reads data from quiz file and returns array of {correct, difficulty}
+    float[][] parseQuizData(){ // Reads data from quiz file and returns array of {isCorrect, difficulty}
         List<float[]> quizList = new List<float[]>();
 
         using(StreamReader sr = new StreamReader(quizfile)){
@@ -249,7 +239,7 @@ public class DataProcessing : MonoBehaviour
         }
         return scores; 
     }
-    float getAnsScore(float correct, float difficulty){
+    float getAnsScore(float correct, float difficulty){ // Calculates score scaled with Question difficulty
         float score = correct * correctPts  *  difficulty * difficultyFactor;
 
         maxQuizScore += correctPts * difficulty * difficultyFactor;
@@ -259,10 +249,11 @@ public class DataProcessing : MonoBehaviour
 
     // General statistics calculator 
     float[] calcDataStats(float[] data, string type){ // Returns Array: {average, stdDev, totalScore, numDataPoints}
+        // Calculate Average
         float avg = 0;
         int len = data.Length; 
         foreach(float s in data){
-            
+
             if(s == -1){ // If Invalid, then don't count it in average
                 len--; 
                 continue; 
@@ -272,6 +263,7 @@ public class DataProcessing : MonoBehaviour
         }
         avg = avg/len;
 
+        // Calculate Standard Deviation
         float stdDev = 0;
         foreach(float s in data){
                 if(s == -1){ // Event Condition: If timeout, then don't count it in average
@@ -292,7 +284,7 @@ public class DataProcessing : MonoBehaviour
 
     // Total Score Calculator
     float calcTotalScore(float[] gazeStats, float[] responseStats, float[] quizStats){
-
+        // Calculate maximum possible gazeScore
         maxGazeScore = boxScores.Max() * gazeStats[3];
 
         // Normalize weights
@@ -320,47 +312,40 @@ public class DataProcessing : MonoBehaviour
 
 
 
-    float[,] createHeatMap(float[][] data){
-        // Create heatmap of gaze data
+    float[,] createHeatMap(float[][] data){ // Create heatmap of gaze data
+
+        // Calculate max x and y values of heatMap according to boundary angles from camera
         double maxX = Math.Tan(maxMapAngles[0] * Mathf.Deg2Rad) * planeDist;
         double maxY = Math.Tan(maxMapAngles[1] * Mathf.Deg2Rad) * planeDist;
 
+        // Update heatmap dimensions
         heatMapDims[0] = (int)Math.Round(maxX * planeScaleFactor); 
         heatMapDims[1] = (int)Math.Round(maxY * planeScaleFactor);    
 
         float[,] heatMap = new float[heatMapDims[1], heatMapDims[0]];
-
-        
-        Debug.Log("Max x and y: " + maxX + " " + maxY);
-        Debug.Log("Heatmap dims: " + heatMapDims[0] + " " + heatMapDims[1]); 
-
         foreach(float[] d in data){
-            float thetaX = d[0];
-            float thetaY = d[1];
-
-            if(thetaX > maxMapAngles[0] || thetaY > maxMapAngles[1]){
+            float thetaX = d[0]; float thetaY = d[1];
+            // if gaze point is outside of heatmap, then skip it
+            if(thetaX > maxMapAngles[0] || thetaY > maxMapAngles[1]){ 
                 continue;
             }   
-
+            // Calculate x and y location of gaze point on heatmap
             double x = Math.Tan(thetaX * Mathf.Deg2Rad) * planeDist;
             double y = Math.Tan(thetaY * Mathf.Deg2Rad) * planeDist;            
 
-
+            // Calculate indices of x and y location on heatmap
             int xInd = (int) Math.Round( (x/(maxX) + 1)/2 * heatMapDims[0]) ;
             int yInd = (int) Math.Round( (-y/(maxY) + 1)/2 * heatMapDims[1]) ;
 
-            // Debug.Log(x + " " + y + " " + xInd + " " + yInd); 
-
             updateMapValues(heatMap, xInd, yInd);
-
         }
         normalizeMap(heatMap);
         return heatMap;
 
     }
 
-    void updateMapValues(float[,] map, float x, float y){
-
+    void updateMapValues(float[,] map, float x, float y){ 
+        // Adds values to heatmap around gaze point
         int minBoundX, maxBoundX, minBoundY, maxBoundY;
         
         float brushSize = heatMapDims.Min() * brushStroke; 
@@ -378,21 +363,19 @@ public class DataProcessing : MonoBehaviour
         if( y + brushSize > heatMapDims[1]){maxBoundY = heatMapDims[1];}
         else{maxBoundY = (int) (y + brushSize);}
 
-        // Debug.Log(minBoundX + " " + maxBoundX + " " + minBoundY + " " + maxBoundY); 
-
-        // Updating Map Values: Add values in a circle around the point that decreases in magnitude with distance from point
+        // Updating Map Values: Add values in a circle around the 
+        // point that decreases in magnitude with distance from point
         for(int i = minBoundY; i < maxBoundY; i++){
             for(int j = minBoundX; j < maxBoundX; j++){
                 float dist = Mathf.Sqrt(Mathf.Pow(x-i, 2) + Mathf.Pow(y-j, 2));
                 float val = dist!= 0 ? 1/dist : 1; 
-                // Debug.Log((i >= heatMapDims[1]) + " " + (j >= heatMapDims[0])); 
                 map[i,j] += val;
             }
         }
 
     }
 
-    void normalizeMap(float[,] map){
+    void normalizeMap(float[,] map){ // Normalize heatmap values to be between 0 and 1
         float maxVal = map.Cast<float>().Max();
         for(int i = 0; i < heatMapDims[1]; i++){
             for(int j = 0; j < heatMapDims[0]; j++){
@@ -403,7 +386,7 @@ public class DataProcessing : MonoBehaviour
 
     void drawHeatMap(float[,] map){ // ONLY WORKS FOR SQUARE MAPS
 
-        var gradient = new Gradient();
+        var gradient = new Gradient(); // Heatmap gradient from blue to red
         gradient.SetKeys(
             new GradientColorKey[] {new GradientColorKey(Color.blue, 0.0f), 
                                     new GradientColorKey(Color.green, 0.3f),
@@ -414,18 +397,20 @@ public class DataProcessing : MonoBehaviour
         );
 
 
+        // Rescale heatmap plane to fit heatmap
         heatmapPlane.transform.localScale = new Vector3((float)heatMapDims[0]/heatMapDims.Max(), (float)heatMapDims[1]/heatMapDims.Max(), 1);
-        var texture = new Texture2D(heatMapDims[0], heatMapDims[1]);
+        var texture = new Texture2D(heatMapDims[0], heatMapDims[1]); // Create new texture of heatmap dimensions
 
         Color[,] colors = new Color[heatMapDims[1] , heatMapDims[0]];
 
-        for(int i = 0; i < heatMapDims[1]; i++){
+        for(int i = 0; i < heatMapDims[1]; i++){ // Set colors of heatmap
             for(int j = 0; j < heatMapDims[0]; j++){
                 float val = map[i,j];
                 colors[i, j] = gradient.Evaluate(val);
             }
         }
 
+        // Convert 2D array to 1D texture array
         Color[] pixelColors = new Color[heatMapDims[0] * heatMapDims[1]];
         int index = 0; 
         for(int j=0; j < heatMapDims[0]; j++){
@@ -434,37 +419,41 @@ public class DataProcessing : MonoBehaviour
             }
         }
 
-        texture.SetPixels(pixelColors);
+        texture.SetPixels(pixelColors); 
         // texture.SetPixels(colors.Cast<Color>().ToArray());
 
         texture.Apply();
-        heatmapPlane.GetComponent<Renderer>().material.mainTexture = texture;
+        heatmapPlane.GetComponent<Renderer>().material.mainTexture = texture; // Set texture to heatmap plane
 
     }
 
     void drawReactionTime(float[][] data){
+        // Calculate minimum response time
         float min = 1000f; 
         for(int i = 0; i < data.Length; i++){
-            // Debug.Log(data[i][0] + " "  + data[i][1]); 
             if(data[i][0] < min){
                 min = data[i][0];
             }
         }   
-
+        // Minimum and Maxmimum point in unity coordinates for reaction bar
         Vector3 barStartPos = startPt.transform.localPosition; 
         Vector3 barEndPos = endPt.transform.localPosition;
 
+        // Minimum and Maximum response times in graph
         float minResTime = 0; 
         float maxResTime = 475;
 
+        // Minimum and Maximum response times in real life
         float minTimeThresh = 0f; 
         float maxTimeThresh = 3.5f; // Scales Response time of 0.7s to mean (200 ms)
 
+        // Scale real life response time to graph response time
         float scaledRT = ((min - minTimeThresh)/(maxTimeThresh - minTimeThresh) + minTimeThresh) * 1000;
 
+        // Calculate reaction bar position
         Vector3 newBarPos = (barEndPos - barStartPos) * (scaledRT - minResTime) / (maxResTime - minResTime) + barStartPos;
 
-        // reactionBar.transform.position = reactionBar.transform.TransformVector(newBarPos);
+        // Move reactionBar to new position
         reactionBar.transform.localPosition = newBarPos;
 
 
@@ -472,26 +461,24 @@ public class DataProcessing : MonoBehaviour
 
     void displayResults(float[] gazeStats, float[] responseStats, float[] quizStats, float totalScore){
         string printTxt = "\n";
-        float result = calcADHDProb(totalScore);
+        float result = calcADHDProb(totalScore); // Probability of not having ADHD
         printTxt += "Gaze Score: " + gazeStats[2] + " Max : " + maxGazeScore + "\n";
         printTxt += "Response Score: " + responseStats[2]/total_num_of_events + "\n";
         printTxt += "Quiz Score: " + quizStats[2] + "\n";
         printTxt += "Total Score: " + totalScore + "\n";
-        printTxt += "ADHD Probability: " + (100 - (result * 100)) + "%";
+        printTxt += "ADHD Probability: " + (100 - (result * 100)) + "%"; // 1-result to get probability of having ADHD
 
         resultText.text = printTxt;
 
     }
 
     float calcADHDProb(float score){
+        // Calculates probability of ADHD based on score and threshold
         float prob; 
         if(score - scoreThreshold < 0){
-            prob = 0.5f * (score/scoreThreshold);
-        }
+            prob = 0.5f * (score/scoreThreshold); }
         else{
-            prob = 0.5f + 0.5f * (score - scoreThreshold)/(1-scoreThreshold);
-        }
-        
+            prob = 0.5f + 0.5f * (score - scoreThreshold)/(1-scoreThreshold); }
         return (float)Math.Round(prob, 3);  
 
     }

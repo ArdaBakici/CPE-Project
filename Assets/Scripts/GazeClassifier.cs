@@ -31,21 +31,10 @@ public class GazeClassifier : MonoBehaviour
         cameraTf = GetComponentInChildren<Camera>().GetComponent<Transform>(); 
         
         gazefile = Application.persistentDataPath + gazeFileName;
-        // responsefile = path + responseFileName; 
 
-        if(File.Exists(gazefile)){
+        if(File.Exists(gazefile)){ // Resetting File at the start of the game
             File.Delete(gazefile);
         }
-        // if(File.Exists(responsefile)){
-        //     File.Delete(responsefile);
-        // }
-        // File.Create(gazefile);
-        // File.Create(responsefile);
-        
-        // gazeWriter = new StreamWriter(gazefile, true);
-        // responseWriter = new StreamWriter(responsefile, true);
-
- 
 
     }
 
@@ -55,17 +44,17 @@ public class GazeClassifier : MonoBehaviour
         gazeAngles();
     }
 
-    void gazeAngles(){
-        // DrawLine(cameraTf.position, cameraTf.position + cameraTf.forward*10, Color.white, 2);
+    void gazeAngles(){ // Calculates the angle of the Camera (w.r.t z-axis) and saves it t a file 
         gazeDir = cameraTf.forward; 
-        // Debug.Log("" + gazeDir.x + " " + gazeDir.y + " "+ gazeDir.z); 
 
+        // Calculate angles between z-axis and Forward vector of camera
         float thetaX = Vector3.Angle(new Vector3(0,0,1), new Vector3(gazeDir.x, 0, gazeDir.z));  
         float thetaY = Vector3.Angle(new Vector3(0,0,1), new Vector3(0, gazeDir.y, Math.Abs(gazeDir.z)));  
         
         // Fixing for scene: 
         thetaX = thetaX - 180;
 
+        // Adding sign to the angle
         if(gazeDir.x < 0){
             thetaX = -thetaX; 
         }
@@ -74,26 +63,23 @@ public class GazeClassifier : MonoBehaviour
         }
 
 
-        // double xDeg = (thetaX*180)/Math.PI; 
-        // double yDeg = (thetaY*180)/Math.PI; 
         double xDeg = thetaX; 
         double yDeg = thetaY; 
-        // Debug.Log(xDeg + " " + yDeg); 
         xText.text = "X Degrees: " + Math.Round(xDeg, 2); 
         yText.text = "Y Degrees: " + Math.Round(yDeg, 2);  
     
-
-        
         saveGazeData(thetaX, thetaY);
 
     }
 
-    void saveGazeData(float x, float y){
+    void saveGazeData(float x, float y){ //  Saving Data to a file
+
         string gazeData = "" + x + "," + y + "\n"; 
-        StreamWriter gazeWriter = new StreamWriter(gazefile, true);
+
+        StreamWriter gazeWriter = new StreamWriter(gazefile, true); // Opening file stream
         gazeWriter.WriteLine(gazeData);
         gazeWriter.Close();
-        // File.AppendAllText(gazefile, gazeData); 
+
     }
 
 
