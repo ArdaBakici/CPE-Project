@@ -47,7 +47,7 @@ public class DataProcessing : MonoBehaviour
     // Total Score Parameters-----------
 
     // Final Score Threshold: 
-    public float scoreThreshold = 0; // If score is below this threshold, then the user is considered distracted
+    public float scoreThreshold = 0.5f; // If score is below this threshold, then the user is considered distracted
 
     // Weights for each score type: {gaze, response, quiz}
     public Dictionary<string, float> weights = new Dictionary<string, float>(){ 
